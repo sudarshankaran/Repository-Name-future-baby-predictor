@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Baby Predictor - A software by Sudarshan Karan</title>
+    <style>
+        :root {
+            --primary: #ec4899;
+            --primary-hover: #db2777;
+            --primary-light: #fce7f3;
+            --secondary: #8b5cf6;
+            --bg-gradient: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 50%, #eff6ff 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.6);
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #f472b6;
+                --primary-hover: #ec4899;
+                --primary-light: rgba(244, 114, 182, 0.15);
+                --secondary: #a78bfa;
+                --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #172554 100%);
+                --card-bg: rgba(30, 41, 59, 0.75);
+                --card-border: rgba(255, 255, 255, 0.1);
+                --text-main: #f9fafb;
+                --text-muted: #9ca3af;
+                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Hero Section */
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "🧬";
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.04;
+            top: -20px;
+            right: -20px;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .author {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Disclaimer Banner */
+        .disclaimer-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--secondary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            box-shadow: var(--shadow);
+        }
+
+        .disclaimer-card strong {
+            color: var(--text-main);
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        /* Photo Upload Section */
+        .partners-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .partners-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-card {
+            border: 2px dashed var(--card-border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 240px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-card:hover {
+            border-color: var(--primary);
+        }
+
+        .upload-card input[type="file"] {
+            display: none;
+        }
+
+        .upload-preview-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 3px solid var(--primary);
+            display: none;
+        }
+
+        .upload-preview-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-placeholder .icon {
+            font-size: 3rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Trait Questions Section */
+        .traits-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .traits-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .trait-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--primary-light);
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--primary);
+        }
+
+        /* Main Predict Button Container */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .btn-large {
+            font-size: 1.2rem;
+            padding: 16px 40px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn-large:hover {
+            opacity: 0.95;
+            box-shadow: 0 12px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .dna-spinner {
+            font-size: 4rem;
+            animation: bounceRotate 1.5s infinite ease-in-out;
+        }
+
+        @keyframes bounceRotate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            min-height: 30px;
+        }
+
+        /* Result Section */
+        #result-screen {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .mini-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            background: #ccc;
+        }
+
+        .mini-plus {
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .baby-showcase {
+            text-align: center;
+            position: relative;
+        }
+
+        .baby-image-container {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 16px auto;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            animation: scaleIn 0.5s ease;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gender-badge {
+            position: absolute;
+            bottom: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .baby-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Quotes Box */
+        .quotes-box {
+            background: var(--primary-light);
+            border: 1px solid var(--card-border);
+            padding: 16px 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-style: italic;
+            color: var(--text-main);
+            margin-top: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .quotes-box p {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .quotes-box span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        .simulation-traits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .trait-result-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .trait-result-card .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .trait-result-card .value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Probabilities Section */
+        .probabilities-section {
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .prob-item {
+            margin-bottom: 12px;
+        }
+
+        .prob-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .prob-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .prob-bar-bg {
+            height: 8px;
+            background: var(--card-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .prob-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%;
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+        }
+
+        .prob-disclaimer {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Result Action Buttons */
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* Privacy Card */
+        .privacy-card {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.01);
+            border: 1px solid var(--card-border);
+            padding: 12px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-top: 1px solid var(--card-border);
+            margin-top: 20px;
+        }
+
+        footer .footer-brand {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        footer .footer-author {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Toast notification */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-main);
+            color: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+            border: 1px solid var(--card-border);
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Hero Section -->
+        <header>
+            <h1>Future Baby Predictor</h1>
+            <div class="author">A software by Sudarshan Karan</div>
+            <p class="subtitle">“A fun genetics-inspired baby simulation based on the traits you provide.”</p>
+        </header>
+
+        <!-- Disclaimer Banner -->
+        <div class="disclaimer-card">
+            <strong>Disclaimer:</strong> “Real human genetic inheritance is extremely complex. This application uses simplified rule-based simulation and is not a scientific, medical, or genetic prediction.”
+        </div>
+
+        <!-- Main Input Form Container -->
+        <div id="input-screen" class="glass-card">
+            <h2>📸 Partner Photos & Preferences</h2>
+            <p class="section-desc">Upload photos of both partners and choose preference options for personalized simulation.</p>
+
+            <div class="partners-grid">
+                <!-- Partner 1 -->
+                <div class="upload-card" id="card-p1">
+                    <div class="upload-preview-container" id="preview-container-p1">
+                        <img id="img-preview-p1" src="" alt="Partner 1 Preview">
+                    </div>
+                    <div class="upload-placeholder" id="placeholder-p1">
+                        <span class="icon">📷</span>
+                        <span style="font-weight: 600; font-size: 1.05rem;">Partner 1</span>
+                    </div>
+                    <input type="file" id="file-p1" accept="image/*">
+                    <button class="btn btn-small" onclick="document.getElementById('file-p1').click()" id="btn-upload-p1">📷 Upload Photo</button>
+                    <div class="photo-actions" id="actions-p1" style="display: none;">
+                        <button class="btn btn-small btn-secondary" onclick="document.getElementById('file-p1').click()">Change Photo</button>
+                        <button class="btn btn-small btn-secondary" onclick="resetPhoto('p1')">Remove</button>
+                    </div>
+                </div>
+
+                <!-- Partner 2 -->
+                <div class="upload-card" id="card-p2">
+                    <div class="upload-preview-container" id="preview-container-p2">
+                        <img id="img-preview-p2" src="" alt="Partner 2 Preview">
+                    </div>
+                    <div class="upload-placeholder" id="placeholder-p2">
+                        <span class="icon">📷</span>
+                        <span style="font-weight: 600; font-size: 1.05rem;">Partner 2</span>
+                    </div>
+                    <input type="file" id="file-p2" accept="image/*">
+                    <button class="btn btn-small" onclick="document.getElementById('file-p2').click()" id="btn-upload-p2">📷 Upload Photo</button>
+                    <div class="photo-actions" id="actions-p2" style="display: none;">
+                        <button class="btn btn-small btn-secondary" onclick="document.getElementById('file-p2').click()">Change Photo</button>
+                        <button class="btn btn-small btn-secondary" onclick="resetPhoto('p2')">Remove</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gender Preference Selection -->
+            <div class="form-group" style="margin-top: 25px; max-width: 300px;">
+                <label for="gender-pref">👶 Predict Gender Preference</label>
+                <select id="gender-pref">
+                    <option value="random">✨ Surprise Me (Random)</option>
+                    <option value="boy">👦 Baby Boy</option>
+                    <option value="girl">👧 Baby Girl</option>
+                </select>
+            </div>
+
+            <!-- Optional Traits Section -->
+            <div style="margin-top: 35px;">
+                <h2>🧬 Optional Traits</h2>
+                <p class="section-desc">“You can skip these questions. The simulation can still run using default/randomized trait logic.”</p>
+
+                <div class="traits-container">
+                    <!-- Partner 1 Traits -->
+                    <div class="trait-column">
+                        <h3>Partner 1 Traits</h3>
+                        <div class="form-group">
+                            <label for="p1-skin">Skin Tone</label>
+                            <select id="p1-skin">
+                                <option value="">-- Select --</option>
+                                <option value="light">Light</option>
+                                <option value="medium">Medium</option>
+                                <option value="deep">Deep</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p1-eyes">Eye Color</label>
+                            <select id="p1-eyes">
+                                <option value="">-- Select --</option>
+                                <option value="brown">Brown</option>
+                                <option value="black">Black</option>
+                                <option value="blue">Blue</option>
+                                <option value="green">Green</option>
+                                <option value="hazel">Hazel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p1-hair">Hair Color</label>
+                            <select id="p1-hair">
+                                <option value="">-- Select --</option>
+                                <option value="black">Black</option>
+                                <option value="brown">Brown</option>
+                                <option value="blonde">Blonde</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p1-blood">Blood Group</label>
+                            <select id="p1-blood">
+                                <option value="">-- Select --</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p1-height">Height</label>
+                            <input type="number" id="p1-height" placeholder="Height in cm" min="100" max="250">
+                        </div>
+                    </div>
+
+                    <!-- Partner 2 Traits -->
+                    <div class="trait-column">
+                        <h3>Partner 2 Traits</h3>
+                        <div class="form-group">
+                            <label for="p2-skin">Skin Tone</label>
+                            <select id="p2-skin">
+                                <option value="">-- Select --</option>
+                                <option value="light">Light</option>
+                                <option value="medium">Medium</option>
+                                <option value="deep">Deep</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p2-eyes">Eye Color</label>
+                            <select id="p2-eyes">
+                                <option value="">-- Select --</option>
+                                <option value="brown">Brown</option>
+                                <option value="black">Black</option>
+                                <option value="blue">Blue</option>
+                                <option value="green">Green</option>
+                                <option value="hazel">Hazel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p2-hair">Hair Color</label>
+                            <select id="p2-hair">
+                                <option value="">-- Select --</option>
+                                <option value="black">Black</option>
+                                <option value="brown">Brown</option>
+                                <option value="blonde">Blonde</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p2-blood">Blood Group</label>
+                            <select id="p2-blood">
+                                <option value="">-- Select --</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="p2-height">Height</label>
+                            <input type="number" id="p2-height" placeholder="Height in cm" min="100" max="250">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Card -->
+            <div class="privacy-card" style="margin-top: 25px;">
+                <span>🔒</span>
+                <div>
+                    <strong>Your Privacy:</strong> “Photos selected in this application are processed locally in your browser and are not uploaded by the application.”
+                </div>
+            </div>
+
+            <!-- Predict Button -->
+            <div class="action-container" style="margin-top: 30px;">
+                <button class="btn btn-large" onclick="handlePredict()">🧬 Predict My Baby</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="glass-card">
+            <div class="dna-spinner">🧬</div>
+            <div class="loading-text" id="loading-msg">Analyzing family traits…</div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="glass-card">
+            <div class="result-header-preview">
+                <img id="res-mini-p1" class="mini-avatar" src="" alt="P1">
+                <span class="mini-plus">+</span>
+                <img id="res-mini-p2" class="mini-avatar" src="" alt="P2">
+            </div>
+
+            <div class="baby-showcase">
+                <h2 style="justify-content: center; margin-bottom: 4px;">✨ Your Baby Simulation</h2>
+                <p class="section-desc">Based on your inputs and localized rule-based modeling</p>
+
+                <div class="baby-image-container">
+                    <img id="baby-img" src="" alt="Simulated Baby">
+                    <div class="gender-badge" id="res-gender-badge">👶 Baby</div>
+                </div>
+            </div>
+
+            <!-- Quote Container -->
+            <div class="quotes-box">
+                <p id="res-quote">"A new baby is like the beginning of all things—wonder, hope, a dream of possibilities."</p>
+                <span id="res-quote-author">— Eda LeShan</span>
+            </div>
+
+            <!-- Simulated Traits Display -->
+            <div class="simulation-traits-grid">
+                <div class="trait-result-card">
+                    <span class="label">👶 Gender</span>
+                    <span class="value" id="res-gender">-</span>
+                </div>
+                <div class="trait-result-card">
+                    <span class="label">👁 Eye Color</span>
+                    <span class="value" id="res-eyes">-</span>
+                </div>
+                <div class="trait-result-card">
+                    <span class="label">💇 Hair Color</span>
+                    <span class="value" id="res-hair">-</span>
+                </div>
+                <div class="trait-result-card">
+                    <span class="label">🎨 Skin Tone</span>
+                    <span class="value" id="res-skin">-</span>
+                </div>
+                <div class="trait-result-card">
+                    <span class="label">📏 Estimated Height</span>
+                    <span class="value" id="res-height">-</span>
+                </div>
+                <div class="trait-result-card">
+                    <span class="label">🩸 Blood Group</span>
+                    <span class="value" id="res-blood">-</span>
+                </div>
+            </div>
+
+            <!-- Simulation Probabilities -->
+            <div class="probabilities-section">
+                <h3 style="font-size: 1rem; margin-bottom: 12px; color: var(--text-main);">Simulation Probabilities</h3>
+                
+                <div class="prob-item">
+                    <div class="prob-info">
+                        <span id="prob-label-1">Primary Trait Match</span>
+                        <span id="prob-val-1">0%</span>
+                    </div>
+                    <div class="prob-bar-bg"><div class="prob-bar-fill" id="prob-fill-1"></div></div>
+                </div>
+
+                <div class="prob-item" style="margin-top: 10px;">
+                    <div class="prob-info">
+                        <span id="prob-label-2">Secondary Marker Weight</span>
+                        <span id="prob-val-2">0%</span>
+                    </div>
+                    <div class="prob-bar-bg"><div class="prob-bar-fill" id="prob-fill-2"></div></div>
+                </div>
+
+                <div class="prob-item" style="margin-top: 10px;">
+                    <div class="prob-info">
+                        <span id="prob-label-3">Genetic Diversity Index</span>
+                        <span id="prob-val-3">0%</span>
+                    </div>
+                    <div class="prob-bar-bg"><div class="prob-bar-fill" id="prob-fill-3"></div></div>
+                </div>
+
+                <div class="prob-disclaimer">
+                    “These percentages are simplified simulation values, not scientific genetic probabilities.”
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="result-actions">
+                <button class="btn" onclick="handleReset()">🔄 Try Again</button>
+                <button class="btn btn-secondary" onclick="shareResult()">📤 Share Result</button>
+                <button class="btn btn-secondary" onclick="saveResultCanvas()">📥 Save Result</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-brand">Future Baby Predictor</div>
+            <div>A software by <span class="footer-author">Sudarshan Karan</span></div>
+            <div style="margin-top: 4px;">Entertainment & Educational Simulation</div>
+            <div style="font-style: italic;">“Not a scientific, medical, or genetic prediction.”</div>
+        </footer>
+    </div>
+
+    <!-- Hidden toast element -->
+    <div id="toast">Message here</div>
+
+    <!-- Hidden Canvas for Save Image Generation -->
+    <canvas id="export-canvas" width="600" height="750" style="display: none;"></canvas>
+
+    <script>
+        // ==========================
+        // PHOTO UPLOAD
+        // ==========================
+        const state = {
+            p1PhotoUrl: null,
+            p2PhotoUrl: null,
+            simulationResult: null
+        };
+
+        function setupPhotoUpload(partnerKey) {
+            const fileInput = document.getElementById(`file-${partnerKey}`);
+            const previewContainer = document.getElementById(`preview-container-${partnerKey}`);
+            const previewImg = document.getElementById(`img-preview-${partnerKey}`);
+            const placeholder = document.getElementById(`placeholder-${partnerKey}`);
+            const uploadBtn = document.getElementById(`btn-upload-${partnerKey}`);
+            const actions = document.getElementById(`actions-${partnerKey}`);
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 10 * 1024 * 1024) {
+                        showToast("File size too large. Please select an image under 10MB.");
+                        return;
+                    }
+                    const url = URL.createObjectURL(file);
+                    if (partnerKey === 'p1') state.p1PhotoUrl = url;
+                    else state.p2PhotoUrl = url;
+
+                    previewImg.src = url;
+                    previewContainer.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    uploadBtn.style.display = 'none';
+                    actions.style.display = 'flex';
+                }
+            });
+        }
+
+        setupPhotoUpload('p1');
+        setupPhotoUpload('p2');
+
+        function resetPhoto(partnerKey) {
+            const fileInput = document.getElementById(`file-${partnerKey}`);
+            const previewContainer = document.getElementById(`preview-container-${partnerKey}`);
+            const previewImg = document.getElementById(`img-preview-${partnerKey}`);
+            const placeholder = document.getElementById(`placeholder-${partnerKey}`);
+            const uploadBtn = document.getElementById(`btn-upload-${partnerKey}`);
+            const actions = document.getElementById(`actions-${partnerKey}`);
+
+            fileInput.value = '';
+            if (partnerKey === 'p1') state.p1PhotoUrl = null;
+            else state.p2PhotoUrl = null;
+
+            previewImg.src = '';
+            previewContainer.style.display = 'none';
+            placeholder.style.display = 'flex';
+            uploadBtn.style.display = 'inline-flex';
+            actions.style.display = 'none';
+        }
+
+        // ==========================
+        // QUOTES & DATA BANK
+        // ==========================
+        const quotesCollection = [
+            { quote: "A new baby is like the beginning of all things—wonder, hope, a dream of possibilities.", author: "Eda LeShan" },
+            { quote: "Children bring us a piece of heaven on earth and remind us of pure, unconditional joy.", author: "Sudarshan Karan" },
+            { quote: "A baby fills a place in your heart that you never knew was empty.", author: "Anonymous" },
+            { quote: "Ten little fingers, ten perfect toes, fill our hearts with love that overflows.", author: "Traditional Nursery Rhyme" },
+            { quote: "Babies are bits of star-dust blown from the hand of God.", author: "Larry Barretto" },
+            { quote: "A baby is an angel whose wings decrease as his legs increase.", author: "French Proverb" }
+        ];
+
+        // ==========================
+        // TRAIT INPUTS & SIMULATION ENGINE
+        // ==========================
+        const eyeWeights = {
+            brown: 0.55,
+            black: 0.20,
+            hazel: 0.10,
+            blue: 0.08,
+            green: 0.07
+        };
+
+        const hairWeights = {
+            black: 0.45,
+            brown: 0.30,
+            blonde: 0.15,
+            other: 0.10
+        };
+
+        const skinWeights = {
+            medium: 0.45,
+            light: 0.35,
+            deep: 0.20
+        };
+
+        function weightedRandom(weights) {
+            let sum = 0;
+            const r = Math.random();
+            for (let key in weights) {
+                sum += weights[key];
+                if (r <= sum) return key;
+            }
+            return Object.keys(weights)[0];
+        }
+
+        function simulateGender(pref) {
+            if (pref === 'boy') return 'Boy 👦';
+            if (pref === 'girl') return 'Girl 👧';
+            return Math.random() < 0.5 ? 'Boy 👦' : 'Girl 👧';
+        }
+
+        function simulateEyeColor(p1Val, p2Val) {
+            if (p1Val && Math.random() < 0.4) return p1Val;
+            if (p2Val && Math.random() < 0.4) return p2Val;
+            return weightedRandom(eyeWeights);
+        }
+
+        function simulateHairColor(p1Val, p2Val) {
+            if (p1Val && Math.random() < 0.4) return p1Val;
+            if (p2Val && Math.random() < 0.4) return p2Val;
+            return weightedRandom(hairWeights);
+        }
+
+        function simulateSkinTone(p1Val, p2Val) {
+            if (p1Val && p2Val && p1Val === p2Val) return p1Val;
+            if (p1Val && Math.random() < 0.4) return p1Val;
+            if (p2Val && Math.random() < 0.4) return p2Val;
+            return weightedRandom(skinWeights);
+        }
+
+        // ==========================
+        // BLOOD GROUP LOGIC
+        // ==========================
+        function simulateBloodGroup(p1Val, p2Val) {
+            const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+            if (!p1Val && !p2Val) return bloodGroups[Math.floor(Math.random() * bloodGroups.length)];
+            
+            const b1 = p1Val || bloodGroups[Math.floor(Math.random() * bloodGroups.length)];
+            const b2 = p2Val || bloodGroups[Math.floor(Math.random() * bloodGroups.length)];
+            
+            const possible = [b1, b2];
+            if (b1.includes('O') && b2.includes('A')) possible.push('A+');
+            if (b1.includes('O') && b2.includes('B')) possible.push('B+');
+            if (b1.includes('A') && b2.includes('B')) possible.push('AB+');
+            
+            const unique = [...new Set(possible)];
+            return unique.slice(0, 2).join(' / ');
+        }
+
+        // ==========================
+        // HEIGHT LOGIC
+        // ==========================
+        function simulateHeight(p1Height, p2Height) {
+            let h1 = parseFloat(p1Height);
+            let h2 = parseFloat(p2Height);
+            
+            let base = 165;
+            if (!isNaN(h1) && !isNaN(h2)) {
+                base = (h1 + h2) / 2 + (Math.random() * 6 - 3);
+            } else if (!isNaN(h1)) {
+                base = h1 + (Math.random() * 10 - 5);
+            } else if (!isNaN(h2)) {
+                base = h2 + (Math.random() * 10 - 5);
+            } else {
+                base = 160 + Math.random() * 25;
+            }
+            
+            const low = Math.round(base - 5);
+            const high = Math.round(base + 5);
+            return `${low}–${high} cm`;
+        }
+
+        // =====================================================
+        // BABY IMAGE LIBRARY (Direct Image URLs Configured)
+        // =====================================================
+        const babyImages = [
+            {
+                id: 1,
+                url: "https://i.ibb.co/1tqzKT5r/baby.jpg",
+                skin: "medium",
+                eyes: "brown",
+                hair: "black"
+            },
+            {
+                id: 2,
+                url: "https://i.ibb.co/DDSkHr4D/baby.jpg",
+                skin: "light",
+                eyes: "blue",
+                hair: "blonde"
+            },
+            {
+                id: 3,
+                url: "https://i.ibb.co/9Hjwrd5F/baby.jpg",
+                skin: "medium",
+                eyes: "hazel",
+                hair: "brown"
+            },
+            {
+                id: 4,
+                url: "https://i.ibb.co/TMVMmXvt/baby.jpg",
+                skin: "deep",
+                eyes: "black",
+                hair: "black"
+            },
+            {
+                id: 5,
+                url: "https://i.ibb.co/Y4nhvRgt/baby.jpg",
+                skin: "light",
+                eyes: "green",
+                hair: "blonde"
+            },
+            {
+                id: 6,
+                url: "https://i.ibb.co/N6Svr8pk/baby.jpg",
+                skin: "medium",
+                eyes: "brown",
+                hair: "brown"
+            },
+            {
+                id: 7,
+                url: "https://i.ibb.co/YFjPjNg5/baby.jpg",
+                skin: "light",
+                eyes: "brown",
+                hair: "black"
+            },
+            {
+                id: 8,
+                url: "https://i.ibb.co/R4zp9dXY/baby.jpg",
+                skin: "deep",
+                eyes: "brown",
+                hair: "black"
+            },
+            {
+                id: 9,
+                url: "https://i.ibb.co/mC28B1gG/baby.jpg",
+                skin: "medium",
+                eyes: "blue",
+                hair: "brown"
+            },
+            {
+                id: 10,
+                url: "https://i.ibb.co/xS37HRFx/baby.jpg",
+                skin: "light",
+                eyes: "hazel",
+                hair: "other"
+            }
+        ];
+
+        function selectBabyImage(simulatedTraits) {
+            let match = babyImages.find(img => 
+                img.skin === simulatedTraits.skin && 
+                img.eyes === simulatedTraits.eyes && 
+                img.hair === simulatedTraits.hair
+            );
+            if (match) return match.url;
+
+            match = babyImages.find(img => 
+                (img.skin === simulatedTraits.skin && img.eyes === simulatedTraits.eyes) ||
+                (img.skin === simulatedTraits.skin && img.hair === simulatedTraits.hair) ||
+                (img.eyes === simulatedTraits.eyes && img.hair === simulatedTraits.hair)
+            );
+            if (match) return match.url;
+
+            const randomIndex = Math.floor(Math.random() * babyImages.length);
+            return babyImages[randomIndex].url;
+        }
+
+        const babyImageElement = document.getElementById('baby-img');
+        
+        babyImageElement.onerror = function () {
+            this.onerror = null;
+            this.src = "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=500";
+        };
+
+        // ==========================
+        // RESULT GENERATION & FLOW
+        // ==========================
+        const loadingMessages = [
+            "Analyzing family traits…",
+            "Combining selected characteristics…",
+            "Running baby simulation…",
+            "Preparing your result…"
+        ];
+
+        function handlePredict() {
+            if (!state.p1PhotoUrl || !state.p2PhotoUrl) {
+                showToast("Please upload both partner photos to continue.");
+                return;
+            }
+
+            document.getElementById('input-screen').style.display = 'none';
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.style.display = 'flex';
+
+            let msgIndex = 0;
+            const msgEl = document.getElementById('loading-msg');
+            
+            const interval = setInterval(() => {
+                msgIndex++;
+                if (msgIndex < loadingMessages.length) {
+                    msgEl.textContent = loadingMessages[msgIndex];
+                }
+            }, 600);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                loadingScreen.style.display = 'none';
+                generateResult();
+                document.getElementById('result-screen').style.display = 'flex';
+            }, 2400);
+        }
+
+        function generateResult() {
+            const genderPref = document.getElementById('gender-pref').value;
+            const p1Skin = document.getElementById('p1-skin').value;
+            const p2Skin = document.getElementById('p2-skin').value;
+            const p1Eyes = document.getElementById('p1-eyes').value;
+            const p2Eyes = document.getElementById('p2-eyes').value;
+            const p1Hair = document.getElementById('p1-hair').value;
+            const p2Hair = document.getElementById('p2-hair').value;
+            const p1Blood = document.getElementById('p1-blood').value;
+            const p2Blood = document.getElementById('p2-blood').value;
+            const p1Height = document.getElementById('p1-height').value;
+            const p2Height = document.getElementById('p2-height').value;
+
+            const simGender = simulateGender(genderPref);
+            const simEyes = simulateEyeColor(p1Eyes, p2Eyes);
+            const simHair = simulateHairColor(p1Hair, p2Hair);
+            const simSkin = simulateSkinTone(p1Skin, p2Skin);
+            const simBlood = simulateBloodGroup(p1Blood, p2Blood);
+            const simHeight = simulateHeight(p1Height, p2Height);
+
+            const randomQuote = quotesCollection[Math.floor(Math.random() * quotesCollection.length)];
+
+            state.simulationResult = {
+                gender: simGender,
+                eyes: simEyes,
+                hair: simHair,
+                skin: simSkin,
+                blood: simBlood,
+                height: simHeight,
+                quote: randomQuote
+            };
+
+            document.getElementById('res-mini-p1').src = state.p1PhotoUrl;
+            document.getElementById('res-mini-p2').src = state.p2PhotoUrl;
+
+            const selectedBabyImgUrl = selectBabyImage({ skin: simSkin, eyes: simEyes, hair: simHair });
+            babyImageElement.src = selectedBabyImgUrl;
+
+            document.getElementById('res-gender').textContent = simGender;
+            document.getElementById('res-gender-badge').textContent = simGender;
+            document.getElementById('res-eyes').textContent = capitalize(simEyes);
+            document.getElementById('res-hair').textContent = capitalize(simHair);
+            document.getElementById('res-skin').textContent = capitalize(simSkin);
+            document.getElementById('res-height').textContent = simHeight;
+            document.getElementById('res-blood').textContent = `Possible: ${simBlood}`;
+
+            document.getElementById('res-quote').textContent = `"${randomQuote.quote}"`;
+            document.getElementById('res-quote-author').textContent = `— ${randomQuote.author}`;
+
+            animateProbabilities();
+        }
+
+        function capitalize(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // ==========================
+        // PROBABILITY DISPLAY
+        // ==========================
+        function animateProbabilities() {
+            const p1 = Math.floor(65 + Math.random() * 25);
+            const p2 = Math.floor(60 + Math.random() * 30);
+            const p3 = Math.floor(70 + Math.random() * 20);
+
+            document.getElementById('prob-label-1').textContent = `${capitalize(state.simulationResult.eyes)} Eye Dominance`;
+            document.getElementById('prob-label-2').textContent = `${capitalize(state.simulationResult.hair)} Hair Inheritance`;
+            document.getElementById('prob-label-3').textContent = `${capitalize(state.simulationResult.skin)} Skin Tone Affinity`;
+
+            document.getElementById('prob-val-1').textContent = `${p1}%`;
+            document.getElementById('prob-val-2').textContent = `${p2}%`;
+            document.getElementById('prob-val-3').textContent = `${p3}%`;
+
+            setTimeout(() => {
+                document.getElementById('prob-fill-1').style.width = `${p1}%`;
+                document.getElementById('prob-fill-2').style.width = `${p2}%`;
+                document.getElementById('prob-fill-3').style.width = `${p3}%`;
+            }, 200);
+        }
+
+        // ==========================
+        // SHARE / DOWNLOAD / RESET
+        // ==========================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function shareResult() {
+            const shareText = `Future Baby Simulation Results:\nGender: ${state.simulationResult.gender}\nEye Color: ${capitalize(state.simulationResult.eyes)}\nHair Color: ${capitalize(state.simulationResult.hair)}\nSkin Tone: ${capitalize(state.simulationResult.skin)}\nHeight: ${state.simulationResult.height}\nBlood Group: ${state.simulationResult.blood}\n\nQuote: "${state.simulationResult.quote.quote}" - ${state.simulationResult.quote.author}\n\n- Future Baby Predictor (A software by Sudarshan Karan)`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Future Baby Predictor',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast("Result copied to clipboard.");
+                });
+            }
+        }
+
+        function saveResultCanvas() {
+            const canvas = document.getElementById('export-canvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ec4899';
+            ctx.font = 'bold 26px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Future Baby Predictor', canvas.width / 2, 45);
+
+            ctx.fillStyle = '#4b5563';
+            ctx.font = '15px sans-serif';
+            ctx.fillText('A software by Sudarshan Karan', canvas.width / 2, 70);
+
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, 160, 60, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(img, canvas.width / 2 - 60, 100, 120, 120);
+                ctx.restore();
+
+                ctx.fillStyle = '#f3f4f6';
+                ctx.roundRect(40, 235, 520, 310, 12);
+                ctx.fill();
+
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 17px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('Simulated Baby Traits:', 70, 270);
+
+                ctx.font = '14px sans-serif';
+                let startY = 305;
+                const traitsList = [
+                    `Gender: ${state.simulationResult.gender}`,
+                    `Eye Color: ${capitalize(state.simulationResult.eyes)}`,
+                    `Hair Color: ${capitalize(state.simulationResult.hair)}`,
+                    `Skin Tone: ${capitalize(state.simulationResult.skin)}`,
+                    `Estimated Height: ${state.simulationResult.height}`,
+                    `Blood Group: ${state.simulationResult.blood}`
+                ];
+
+                traitsList.forEach(t => {
+                    ctx.fillText(`• ${t}`, 80, startY);
+                    startY += 30;
+                });
+
+                ctx.fillStyle = '#4b5563';
+                ctx.font = 'italic 13px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`"${state.simulationResult.quote.quote}"`, canvas.width / 2, 580);
+                ctx.font = '12px sans-serif';
+                ctx.fillText(`— ${state.simulationResult.quote.author}`, canvas.width / 2, 600);
+
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = 'italic 11px sans-serif';
+                ctx.fillText('Entertainment & Educational Simulation - Not a scientific prediction.', canvas.width / 2, 680);
+
+                const link = document.createElement('a');
+                link.download = 'future-baby-prediction.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast("Result image saved successfully!");
+            };
+            img.src = babyImageElement.src;
+        }
+
+        function handleReset() {
+            resetPhoto('p1');
+            resetPhoto('p2');
+
+            document.getElementById('gender-pref').value = 'random';
+            const selects = document.querySelectorAll('select');
+            selects.forEach(s => { if(s.id !== 'gender-pref') s.value = ''; });
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(i => i.value = '');
+
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('input-screen').style.display = 'block';
+
+            document.getElementById('prob-fill-1').style.width = '0%';
+            document.getElementById('prob-fill-2').style.width = '0%';
+            document.getElementById('prob-fill-3').style.width = '0%';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
